@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BLACKSITE: ASHEN PROTOCOL</title>
+<link rel="stylesheet" href="./styles.css">
+<script type="importmap">
+{"imports":{"three":"./vendor/three/three.module.min.js"}}
+</script>
+</head>
+<body>
+<div id="game"></div>
+
+<div id="hud" class="hidden">
+  <div id="crosshair"><span class="ch-dot"></span><span class="ch-t"></span><span class="ch-b"></span><span class="ch-l"></span><span class="ch-r"></span></div>
+  <div id="hitmarker"><span></span><span></span><span></span><span></span></div>
+  <div id="damage-flash"></div>
+
+  <div id="topbar">
+    <div id="team-tag"><span class="tag-v">VANGUARD</span><span class="tag-vs">VS</span><span class="tag-w">WRAITH</span></div>
+    <div id="scoreboard"><span id="score-v">0</span><span class="score-sep">:</span><span id="score-w">0</span></div>
+    <div id="timer">1:40</div>
+    <div id="round-num">ROUND 1 / 8</div>
+  </div>
+
+  <div id="killfeed"></div>
+
+  <div id="obj-panel">
+    <div id="obj-state">SECURE THE SITES</div>
+    <div id="obj-progress"><div id="obj-progress-fill"></div></div>
+    <div id="obj-timer"></div>
+  </div>
+
+  <div id="health-box">
+    <div id="health-num">100</div>
+    <div id="health-bar"><div id="health-fill"></div></div>
+    <div class="hud-label">INTEGRITY</div>
+  </div>
+
+  <div id="ammo-box">
+    <div id="weapon-name">KX-45</div>
+    <div id="ammo-read"><span id="ammo-mag">12</span><span class="ammo-sep">/</span><span id="ammo-reserve">48</span></div>
+    <div class="hud-label">AMMO &nbsp;<span id="grenades">&#9679; 0 FRAG</span></div>
+  </div>
+
+  <div id="money-box">$<span id="money">800</span></div>
+  <div id="hint-bar">WASD MOVE &nbsp;|&nbsp; SHIFT SPRINT &nbsp;|&nbsp; CTRL CROUCH &nbsp;|&nbsp; R RELOAD &nbsp;|&nbsp; E INTERACT &nbsp;|&nbsp; B BUY &nbsp;|&nbsp; M MUTE</div>
+  <div id="plant-prompt" class="hidden">HOLD <b>E</b> TO PLANT THE CHARGE</div>
+  <div id="round-banner" class="hidden"></div>
+</div>
+
+<div id="buy-menu" class="hidden">
+  <div class="buy-head">ARMORY <span>BUY PHASE &mdash; FUNDS: $<span id="buy-funds">800</span></span></div>
+  <div class="buy-grid">
+    <button data-buy="kx45" data-price="0"><b>KX-45</b><i>Sidearm</i><span>FREE</span></button>
+    <button data-buy="vex9" data-price="1200"><b>VEX-9</b><i>SMG</i><span>$1,200</span></button>
+    <button data-buy="br12" data-price="1800"><b>BR-12</b><i>Shotgun</i><span>$1,800</span></button>
+    <button data-buy="ar7" data-price="2700"><b>AR-7</b><i>Assault Rifle</i><span>$2,700</span></button>
+    <button data-buy="m40" data-price="4750"><b>M-40</b><i>Precision Rifle</i><span>$4,750</span></button>
+    <button data-buy="grenade" data-price="300"><b>FRAG</b><i>Grenade &times;1</i><span>$300</span></button>
+  </div>
+  <div class="buy-foot">Press <b>B</b> or <b>ESC</b> to close &mdash; keys 1&ndash;5 switch weapons</div>
+</div>
+
+<div id="overlay">
+  <div class="overlay-panel">
+    <div class="overlay-kicker">MAKE.FUN // TACTICAL FPS</div>
+    <h1 id="overlay-title">BLACKSITE:<br>ASHEN PROTOCOL</h1>
+    <p id="overlay-copy">Ashen Refinery, dusk. Five attackers, five defenders, one
+    energy charge. Plant it at Reactor or Cargo &mdash; or stop them cold.
+    First team to five rounds takes the site.</p>
+    <button id="play-btn">DEPLOY</button>
+    <div class="overlay-controls">WASD move &middot; Mouse aim &middot; LMB fire &middot; RMB aim-down-sights
+    &middot; R reload &middot; E plant / defuse &middot; Q throw frag &middot; B buy &middot; M mute</div>
+  </div>
+</div>
+
+<button id="mute-btn" title="Mute (M)">SOUND ON</button>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
