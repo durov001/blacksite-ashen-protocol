@@ -1,0 +1,121 @@
+/* BLACKSITE: ASHEN PROTOCOL — tactical HUD. Amber #f0a830 / Wraith cyan #3a9ad9. */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b0e12;
+  font-family:system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#dfe6ea;
+  -webkit-user-select:none;user-select:none}
+#game,#game canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hidden{display:none!important}
+#hud{position:absolute;inset:0;pointer-events:none;z-index:5}
+
+/* --- crosshair + hitmarker --- */
+#crosshair{position:absolute;left:50%;top:50%;width:0;height:0}
+#crosshair span{position:absolute;background:#f0a830;box-shadow:0 0 3px #000}
+.ch-dot{width:2px;height:2px;left:-1px;top:-1px}
+.ch-t{width:2px;height:8px;left:-1px;top:calc(-14px - var(--spread,0px))}
+.ch-b{width:2px;height:8px;left:-1px;top:calc(6px + var(--spread,0px))}
+.ch-l{width:8px;height:2px;left:calc(-14px - var(--spread,0px));top:-1px}
+.ch-r{width:8px;height:2px;left:calc(6px + var(--spread,0px));top:-1px}
+#hitmarker{position:absolute;left:50%;top:50%;width:0;height:0;opacity:0;transition:opacity .12s}
+#hitmarker span{position:absolute;width:9px;height:2px;background:#fff}
+#hitmarker span:nth-child(1){transform:translate(-12px,-9px) rotate(45deg)}
+#hitmarker span:nth-child(2){transform:translate(3px,-9px) rotate(-45deg)}
+#hitmarker span:nth-child(3){transform:translate(-12px,7px) rotate(-45deg)}
+#hitmarker span:nth-child(4){transform:translate(3px,7px) rotate(45deg)}
+#hitmarker.show{opacity:1}
+#hitmarker.head span{background:#ff5040}
+#damage-flash{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(200,30,20,.55) 100%)}
+#damage-flash.show{opacity:1;transition:opacity .05s}
+
+/* --- top bar: teams, score, timer --- */
+#topbar{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:16px;background:rgba(8,10,14,.72);
+  border:1px solid rgba(240,168,48,.35);padding:6px 18px;letter-spacing:.12em;white-space:nowrap}
+#team-tag{font-size:11px;font-weight:700;display:flex;gap:8px;align-items:center}
+.tag-v{color:#f0a830}.tag-w{color:#3a9ad9}.tag-vs{color:#77828c;font-weight:400}
+#team-tag.team-vanguard .tag-v{text-decoration:underline;text-underline-offset:3px}
+#team-tag.team-wraith .tag-w{text-decoration:underline;text-underline-offset:3px}
+#scoreboard{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;font-weight:700}
+#score-v{color:#f0a830}#score-w{color:#3a9ad9}.score-sep{color:#77828c;margin:0 4px}
+#timer{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;font-weight:700;color:#fff}
+#timer.low{color:#ff5040}
+#round-num{font-size:11px;color:#9aa7b0;font-weight:600}
+
+/* --- killfeed / objective --- */
+#killfeed{position:absolute;top:14px;right:16px;display:flex;flex-direction:column;gap:4px;
+  align-items:flex-end;font-size:12px}
+#killfeed div{background:rgba(8,10,14,.72);border-right:2px solid #f0a830;padding:4px 10px}
+#killfeed div .kf-v{color:#f0a830}#killfeed div .kf-w{color:#3a9ad9}
+#killfeed div .kf-head{color:#ff5040}
+#obj-panel{position:absolute;top:64px;left:50%;transform:translateX(-50%);text-align:center;width:280px}
+#obj-state{font-size:12px;font-weight:700;letter-spacing:.18em;color:#f0a830;
+  text-shadow:0 1px 3px #000}
+#obj-progress{height:5px;background:rgba(255,255,255,.15);margin-top:5px;border:1px solid rgba(0,0,0,.5)}
+#obj-progress-fill{height:100%;width:0%;background:#f0a830}
+#obj-timer{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;margin-top:3px;color:#ff5040}
+
+/* --- bottom-left health / bottom-right ammo --- */
+#health-box{position:absolute;left:22px;bottom:22px;width:230px}
+#health-num{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:42px;font-weight:700;
+  line-height:1;text-shadow:0 2px 6px #000}
+#health-num.low{color:#ff5040}
+#health-bar{height:10px;background:rgba(255,255,255,.14);border:1px solid rgba(0,0,0,.6);margin:6px 0 4px}
+#health-fill{height:100%;width:100%;background:linear-gradient(90deg,#e08a2a,#f0a830)}
+.hud-label{font-size:10px;letter-spacing:.22em;color:#9aa7b0}
+#ammo-box{position:absolute;right:22px;bottom:22px;text-align:right}
+#weapon-name{font-size:15px;font-weight:700;letter-spacing:.2em;color:#f0a830}
+#ammo-read{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:44px;font-weight:700;
+  line-height:1.05;text-shadow:0 2px 6px #000}
+#ammo-reserve{font-size:22px;color:#9aa7b0}
+#ammo-mag.empty{color:#ff5040}
+.ammo-sep{color:#77828c;font-size:24px;margin:0 2px}
+#grenades{color:#dfe6ea}
+#money-box{position:absolute;right:22px;bottom:118px;font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:17px;font-weight:700;color:#7fd07a;background:rgba(8,10,14,.72);
+  border:1px solid rgba(127,208,122,.35);padding:4px 10px}
+#hint-bar{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  font-size:10px;letter-spacing:.14em;color:#77828c;white-space:nowrap}
+#plant-prompt{position:absolute;left:50%;bottom:24%;transform:translateX(-50%);
+  background:rgba(8,10,14,.85);border:1px solid #f0a830;color:#fff;
+  padding:10px 18px;font-size:14px;letter-spacing:.12em}
+#plant-prompt b{color:#f0a830}
+#round-banner{position:absolute;left:50%;top:32%;transform:translate(-50%,-50%);
+  text-align:center;font-size:34px;font-weight:800;letter-spacing:.16em;color:#fff;
+  text-shadow:0 3px 12px #000,0 0 30px rgba(240,168,48,.5);white-space:pre-line}
+#round-banner small{display:block;font-size:15px;letter-spacing:.22em;color:#f0a830;margin-top:6px}
+
+/* --- buy menu --- */
+#buy-menu{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;
+  width:560px;background:rgba(10,13,17,.94);border:1px solid rgba(240,168,48,.5);
+  padding:18px 20px;pointer-events:auto}
+.buy-head{font-size:16px;font-weight:800;letter-spacing:.22em;color:#f0a830;
+  display:flex;justify-content:space-between;align-items:baseline}
+.buy-head span{font-size:12px;letter-spacing:.08em;color:#7fd07a;font-weight:600}
+.buy-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.buy-grid button{background:#151a20;border:1px solid #39424c;color:#dfe6ea;padding:12px 8px;
+  cursor:pointer;text-align:left;font-family:inherit}
+.buy-grid button:hover{border-color:#f0a830;background:#1d222a}
+.buy-grid button:disabled{opacity:.4;cursor:default}
+.buy-grid button.owned{border-color:#3a9ad9}
+.buy-grid b{display:block;font-size:15px;letter-spacing:.1em}
+.buy-grid i{display:block;font-style:normal;font-size:11px;color:#9aa7b0;margin:2px 0 6px}
+.buy-grid span{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:#7fd07a}
+.buy-foot{font-size:11px;color:#77828c;letter-spacing:.06em;text-align:center}
+.buy-foot b{color:#dfe6ea}
+
+/* --- overlay menu --- */
+#overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 35%,rgba(64,40,8,.45),rgba(5,7,10,.78) 75%)}
+.overlay-panel{max-width:620px;text-align:center;padding:30px}
+.overlay-kicker{font-size:12px;letter-spacing:.4em;color:#3a9ad9;font-weight:700}
+#overlay-title{font-size:52px;line-height:1.02;letter-spacing:.06em;margin:12px 0 14px;
+  color:#f5f0e6;text-shadow:0 4px 24px rgba(240,168,48,.35)}
+#overlay-copy{font-size:15px;line-height:1.6;color:#b9c2c9;max-width:520px;margin:0 auto}
+#play-btn{margin-top:22px;background:#f0a830;color:#14100a;border:none;cursor:pointer;
+  font-family:inherit;font-size:17px;font-weight:800;letter-spacing:.28em;padding:14px 46px}
+#play-btn:hover{background:#ffc14d}
+.overlay-controls{margin-top:18px;font-size:11px;letter-spacing:.08em;color:#77828c;line-height:1.8}
+#mute-btn{position:absolute;left:16px;top:14px;z-index:9;background:rgba(8,10,14,.7);
+  border:1px solid #39424c;color:#9aa7b0;font-family:inherit;font-size:10px;letter-spacing:.15em;
+  padding:5px 10px;cursor:pointer}
+#mute-btn:hover{color:#fff;border-color:#f0a830}
